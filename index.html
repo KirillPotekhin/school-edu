@@ -902,6 +902,7 @@
   // ===== KEYPAD LOGIC =====
   
   function kp(ch){
+    timerStartIfNeeded();
     if(!activeInput){
       const firstEmpty = [...document.querySelectorAll('.example input')].find(i => i.value === '');
       if(firstEmpty) setActive(firstEmpty);
@@ -967,9 +968,11 @@ function kpBack(){
     const overlay = document.getElementById('resultOverlay');
     const message = document.getElementById('resultMessage');
 
+    const timeStr = timerStopFormatted();
     overlay.style.display = 'flex';
 
     if (percent === 100) message.textContent = '🎉 Ура! 100%';
+    if(timeStr){ message.textContent += '\n' + timeStr; }
     else if (percent >= 80) message.textContent = `👏 Отлично! ${Math.round(percent)}%`;
     else if (percent >= 70) message.textContent = `💪 Хорошо! ${Math.round(percent)}%`;
     else message.textContent = `Попробуй еще раз: ${Math.round(percent)}%`;
@@ -1015,6 +1018,29 @@ function kpBack(){
     return _setTab(tab);
   };
 
+
+
+  // ===== TIMER (patched) =====
+  let timerStart = null;
+  let timerRunning = false;
+
+  function timerStartIfNeeded(){
+    if(!timerRunning){
+      timerRunning = true;
+      timerStart = Date.now();
+    }
+  }
+
+  function timerStopFormatted(){
+    if(!timerRunning || !timerStart) return '';
+    const sec = Math.floor((Date.now() - timerStart)/1000);
+    timerRunning = false;
+    timerStart = null;
+    if(sec < 60) return `Время: ${sec} сек`;
+    const m = Math.floor(sec/60);
+    const s = sec % 60;
+    return `Время: ${m} мин ${s} сек`;
+  }
 
 </script>
 
