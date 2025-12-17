@@ -413,10 +413,8 @@
     #splash{
       position: fixed;
       inset: 0;
-      z-index: 9999;
-      display: grid;
-      place-items: center;
-      opacity: 1;
+      z-index: 5000;
+      overflow: hidden;
     }
 
     #splash .splash-bg{
@@ -425,34 +423,58 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
 
-    /* Группа по центру */
-    #splash .splash-stack{
+    /* Центровка блока с заголовком + гусём */
+    #splash .splash-content{
       position: relative;
+      height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;   /* вертикальная группа */
-      gap: 14px;
-      padding: 24px;
-      text-align: center;
+      justify-content: center;
+      gap: 18px;
+
+      /* СКРЫТО ДО ПОКАЗА */
+      opacity: 0;
+      transform: translateY(8px) scale(0.985);
+      transition: opacity .45s ease, transform .45s ease;
     }
 
-    /* Заголовок крупнее, в стиле приложения */
-    #splash .splash-title{
-      font-weight: 900;
+    #splash.show-content .splash-content{
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .splash-title{
       color: #fff;
-      letter-spacing: 0.5px;
-      text-shadow: 0 10px 22px rgba(0,0,0,0.28);
-      font-size: clamp(40px, 7vw, 64px);
+      font-weight: 800;
+      letter-spacing: .5px;
+      text-shadow: 0 8px 18px rgba(0,0,0,.22);
+      font-size: clamp(44px, 7vw, 64px);
       line-height: 1.05;
+      margin: 0;
     }
 
-    /* Гусь — крупный, но без обрезки */
-    #splash .splash-goose{
-      width: min(78vw, 520px);
-      height: auto;
+    /* РЕЗЕРВ МЕСТА под картинку => НИЧЕГО НЕ СКАЧЕТ */
+    .splash-goose-wrap{
+      width: min(280px, 68vw);
+      aspect-ratio: 1 / 1; /* под квадратную картинку */
+      display: grid;
+      place-items: center;
+    }
+
+    .splash-goose{
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
       display: block;
-      filter: drop-shadow(0 16px 30px rgba(0,0,0,0.28));
+    }
+
+    /* Уход splash */
+    #splash.fade-out{
+      animation: splashFade .6s ease forwards;
+    }
+    @keyframes splashFade{
+      to { opacity: 0; visibility: hidden; }
     }
 
 </style>
@@ -462,12 +484,23 @@
   <div id="splash">
     <div class="splash-bg"></div>
 
-    <div class="splash-stack" role="img" aria-label="Математика">
+    <div class="splash-content" id="splashContent">
       <div class="splash-title">Математика</div>
-      <img class="splash-goose" src="img/goose.png" alt="">
+
+      <!-- ВАЖНО: задаём фикс. размер, чтобы ничего не прыгало -->
+      <div class="splash-goose-wrap">
+        <img
+          id="splashGoose"
+          src="img/goose.png"
+          alt="Гусь"
+          class="splash-goose"
+          decoding="async"
+          fetchpriority="high"
+        >
+      </div>
     </div>
   </div>
-  
+
   <div class="menu" onclick="toggleMenu()">☰</div>
 
   <div class="modal-overlay" id="modalOverlay" onclick="closeMenu()">
@@ -1075,6 +1108,10 @@ function kpBack(){
   updateHeader();
   renderSelector();
   generateExamples();
+
+  requestAnimationFrame(() => {
+    splashAppReady();
+  });
   // map old tabs (если в HTML остались старые onclick)
   const _setTab = setTab;
   window.setTab = function(tab){
@@ -1107,23 +1144,163 @@ function kpBack(){
     const s = sec % 60;
     return `Время: ${m} мин ${s} сек`;
   }
+  /* =======================
+     SPLASH (JS)
+     ======================= */
 
-  window.addEventListener('load', () => {
+  /**
+   * Настройки
+   */
+  const SPLASH_MIN_SHOW_MS = 1050;     // минимально показываем splash (чтобы не мигало)
+  const SPLASH_MAX_WAIT_MS = 8000;    // максимум ждём готовность приложения (страховка)
+  const SPLASH_REVEAL_DELAY_MS = 180; // небольшая пауза перед появлением текста+гуся
+  const SPLASH_HIDE_FADE_MS = 260;    // время на fade-out (должно совпадать с CSS transition)
+
+  /**
+   * Состояние
+   */
+  let splashShownAt = performance.now();
+  let splashHidden = false;
+
+  /**
+   * 1) Плавно показать контент (текст + гусь) только когда гусь реально загрузился
+   * Требования к HTML:
+   *  - <div id="splash"> ... </div>
+   *  - <img id="splashGoose" ...>
+   *
+   * Требование к CSS:
+   *  - #splash .splash-content { opacity:0; transform: translateY(6px); transition: ... }
+   *  - #splash.show-content .splash-content { opacity:1; transform:none; }
+   */
+  function splashRevealContentWhenReady() {
+    const splash = document.getElementById('splash');
+    const goose = document.getElementById('splashGoose');
+    if (!splash) return;
+
+    const reveal = () => {
+      // чтобы не "щёлкало" сразу при открытии
+      setTimeout(() => splash.classList.add('show-content'), SPLASH_REVEAL_DELAY_MS);
+    };
+
+    // Если картинки нет — просто покажем контент
+    if (!goose) {
+      reveal();
+      return;
+    }
+
+    // Если уже загружена
+    if (goose.complete && goose.naturalWidth > 0) {
+      reveal();
+      return;
+    }
+
+    // decode() лучше всего для Safari/Chrome
+    if (goose.decode) {
+      goose.decode()
+        .then(reveal)
+        .catch(() => {
+          goose.addEventListener('load', reveal, { once: true });
+          // запасной вариант, если load не придёт
+          setTimeout(reveal, 600);
+        });
+    } else {
+      goose.addEventListener('load', reveal, { once: true });
+      setTimeout(reveal, 600);
+    }
+  }
+
+  /**
+   * 2) Скрыть splash (fade-out), но:
+   *  - не раньше минимального времени показа
+   *  - и только один раз
+   *
+   * Требования к CSS:
+   *  - #splash.hide { opacity:0; pointer-events:none; transition: opacity ... }
+   */
+  function splashHide() {
+    if (splashHidden) return;
+    splashHidden = true;
+
     const splash = document.getElementById('splash');
     if (!splash) return;
 
-    const MIN_SHOW_MS = 1200;
-    const FADE_MS = 900;
+    const elapsed = performance.now() - splashShownAt;
+    const wait = Math.max(0, SPLASH_MIN_SHOW_MS - elapsed);
 
-    const hide = () => {
-      splash.style.transition = `opacity ${FADE_MS}ms ease`;
-      splash.style.opacity = '0';
-      setTimeout(() => splash.remove(), FADE_MS);
-    };
+    setTimeout(() => {
+      splash.classList.add('hide');
 
-    setTimeout(hide, MIN_SHOW_MS);
-  });
+      // Можно убрать из DOM, чтобы не мешал кликам
+      setTimeout(() => {
+        if (splash && splash.parentNode) splash.parentNode.removeChild(splash);
+      }, SPLASH_HIDE_FADE_MS + 50);
+    }, wait);
+  }
 
+  /**
+   * 3) Гейт: splash исчезает только когда приложение готово.
+   * Чтобы не городить много изменений, ты вызываешь splashAppReady()
+   * после того, как реально всё отрисовал/создал (обычно после generateExamples()).
+   */
+  let appReadyResolved = false;
+  function splashAppReady() {
+    if (appReadyResolved) return;
+    appReadyResolved = true;
+    splashHide();
+  }
+
+  /**
+   * 4) Страховка: если что-то пошло не так и "готовность" не пришла —
+   * не держим splash вечно.
+   */
+  function splashStartSafetyTimer() {
+    setTimeout(() => {
+      if (!appReadyResolved) {
+        splashHide();
+      }
+    }, SPLASH_MAX_WAIT_MS);
+  }
+
+  /**
+   * 5) Запуск splash логики.
+   * Вызови splashInitOnce() один раз после старта приложения.
+   */
+  function splashInitOnce() {
+    splashShownAt = performance.now();
+    splashRevealContentWhenReady();
+    splashStartSafetyTimer();
+  }
+
+  /* =======================
+     КАК ПОДКЛЮЧИТЬ В ТВОЁМ КОДЕ
+     =======================
+
+  1) В конце инициализации (где у тебя сейчас):
+     updateHeader();
+     renderSelector();
+     generateExamples();
+
+     добавь:
+     splashInitOnce();
+
+  2) Когда ты считаешь, что приложение точно готово и можно убирать splash,
+     вызови:
+     splashAppReady();
+
+     Обычно лучше сразу после generateExamples() и первого setActive(...),
+     т.е. после того как DOM уже заполнился.
+
+  Пример:
+     updateHeader();
+     renderSelector();
+     generateExamples();
+     splashInitOnce();
+
+     // После первой отрисовки — скрываем
+     requestAnimationFrame(() => splashAppReady());
+
+  */
+  splashInitOnce();
 </script>
 
 </body>
