@@ -7,344 +7,398 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
   <style>
-:root{
-  --pad: 25px;
-  --gap: 12px;
-  --keypad-h: 210px;
-  --actions-h: 64px;
-  --actions-gap: 14px;
-  --safe: env(safe-area-inset-bottom, 0px);
-}
-*{ box-sizing: border-box; }
+    :root{
+      --pad: 25px;
+      --gap: 12px;
+      --keypad-h: 210px;
+      --actions-h: 64px;
+      --actions-gap: 14px;
+      --safe: env(safe-area-inset-bottom, 0px);
 
-body{
-  font-family: system-ui, -apple-system, "Nunito", sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 0 var(--pad);
-  margin: 0;
-  color: #333;
-  height: 100dvh;
-  overflow: hidden;
-  position: relative;
-}
+      --actions-bottom: 297px;
+    }
+    *{ box-sizing: border-box; }
 
-h1{
-  text-align: center;
-  font-size: 1.9em;
-  color: #fff;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-  margin: 10px 0 6px;
-  height: 1.9em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    body{
+      font-family: system-ui, -apple-system, "Nunito", sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 0 var(--pad);
+      margin: 0;
+      color: #333;
+      height: 100dvh;
+      overflow: hidden;
+      position: relative;
+    }
 
-.menu{
-  position: absolute;
-  top: 6px;
-  left: var(--pad);
-  font-size: 2.4em;
-  color: #fff;
-  cursor: pointer;
-  user-select: none;
-  z-index: 50;
-}
+    h1{
+      text-align: center;
+      font-size: 1.9em;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      margin: 10px 0 6px;
+      height: 1.9em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-.modal-overlay{
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 200;
-  justify-content: center;
-  align-items: center;
-}
+    .menu{
+      position: absolute;
+      top: 6px;
+      left: var(--pad);
+      font-size: 2.4em;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+      z-index: 50;
+    }
 
-.modal{
-  background: #fff;
-  width: 82%;
-  max-width: 320px;
-  height: 50vh;
-  border-radius: 14px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-  overflow: hidden;
-}
+    .modal-overlay{
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+    }
 
-.modal-header{
-  background: #667eea;
-  color: #fff;
-  padding: 12px;
-  text-align: center;
-  font-size: 1.2em;
-  position: relative;
-}
+    .modal{
+      background: #fff;
+      width: 82%;
+      max-width: 320px;
+      height: 50vh;
+      border-radius: 14px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
 
-.modal-close{
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  font-size: 1.2em;
-  cursor: pointer;
-}
+    .modal-header{
+      background: #667eea;
+      color: #fff;
+      padding: 12px;
+      text-align: center;
+      font-size: 1.2em;
+      position: relative;
+    }
 
-.modal-content{
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+    .modal-close{
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
 
-.modal-content button{
-  padding: 12px 14px;
-  border: none;
-  border-radius: 10px;
-  background: #667eea;
-  color: #fff;
-  font-size: 1em;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+    .modal-content{
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
-.modal-content button.active{
-  box-shadow: 0 0 8px rgba(0,0,0,0.4);
-}
+    .modal-content button{
+      padding: 12px 14px;
+      border: none;
+      border-radius: 10px;
+      background: #667eea;
+      color: #fff;
+      font-size: 1em;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
 
-.header{
-  text-align: center;
-  font-size: 1.15em;
-  color: #fff;
-  margin-bottom: 6px;
-}
+    .modal-content button.active{
+      box-shadow: 0 0 8px rgba(0,0,0,0.4);
+    }
 
-.level-selector{
-  text-align: center;
-  margin: 13px 0 24px 0;
-}
+    .header{
+      text-align: center;
+      font-size: 1.15em;
+      color: #fff;
+      margin-bottom: 6px;
+    }
 
-.level-selector button{
-  margin: 0 6px;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.16);
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
-  backdrop-filter: blur(6px);
-  font-size: 1em;
-}
+    .level-selector{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 13px 0 24px 0;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      background: transparent;
+      padding: 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; /* Firefox */
+    }
+    .level-selector::-webkit-scrollbar{ height: 0; }
 
-.level-selector button.active{
-  background: rgba(255,255,255,0.28);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.22);
-}
+    .level-selector button{
+      margin: 0 6px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.16);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+      backdrop-filter: blur(6px);
+      font-size: 1em;
+    }
 
-.progress-bar{
-  width: 100%;
-  height: 22px;
-  background: rgba(255,255,255,0.3);
-  border-radius: 12px;
-  margin: 8px 0 14px;
-  position: relative;
-}
+    .level-selector button.active{
+      background: rgba(255,255,255,0.28);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.22);
+    }
 
-.progress-bar-fill{
-  height: 100%;
-  width: 0%;
-  border-radius: 12px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 99, 132, 0.85),
-    rgba(255, 159, 64, 0.85),
-    rgba(255, 205, 86, 0.85),
-    rgba(75, 192, 192, 0.85),
-    rgba(54, 162, 235, 0.85),
-    rgba(153, 102, 255, 0.85)
-  );
-  background-size: 300% 100%;
-  animation: rainbowFlow 6s ease-in-out infinite;
-  transition: width 0.4s;
-}
+    .progress-bar{
+      width: 100%;
+      height: 22px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 12px;
+      margin: 8px 0 14px;
+      position: relative;
+    }
 
-@keyframes rainbowFlow{
-  0%{ background-position: 0% 50%; }
-  50%{ background-position: 100% 50%; }
-  100%{ background-position: 0% 50%; }
-}
+    .progress-bar-fill{
+      height: 100%;
+      width: 0%;
+      border-radius: 12px;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 99, 132, 0.85),
+        rgba(255, 159, 64, 0.85),
+        rgba(255, 205, 86, 0.85),
+        rgba(75, 192, 192, 0.85),
+        rgba(54, 162, 235, 0.85),
+        rgba(153, 102, 255, 0.85)
+      );
+      background-size: 300% 100%;
+      animation: rainbowFlow 6s ease-in-out infinite;
+      transition: width 0.4s;
+    }
 
-.progress-icon{
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%) translateX(26px);
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: rgba(180,225,255,0.95);
-  box-shadow: 0 6px 6px rgba(0,0,0,0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    @keyframes rainbowFlow{
+      0%{ background-position: 0% 50%; }
+      50%{ background-position: 100% 50%; }
+      100%{ background-position: 0% 50%; }
+    }
 
-.progress-icon img{
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
+    .progress-icon{
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%) translateX(26px);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(180,225,255,0.95);
+      box-shadow: 0 6px 6px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-#examples{
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  height: calc(
-    100dvh
-    - 56px
-    - 30px
-    - 70px
-    - 48px
-    - var(--actions-h)
-    - 297px
-    - var(--safe)
-  );
-  padding-bottom: var(--gap);
-  background: transparent;
-}
+    .progress-icon img{
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
 
-.example{
-  margin: var(--gap) 0;
-  padding: 10px 8px;
-  background: rgba(255,255,255,0.95);
-  border-radius: 16px;
-  box-shadow: 0 10px 22px rgba(0,0,0,0.18);
-  font-size: 1.25em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  cursor: pointer;
-  user-select: none;
-  min-height: 56px;
-}
+    #examples{
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
 
-.example .expr{
-  font-size: 1.02em;
-  max-width: 84%;
-  overflow-x: auto;
-  white-space: nowrap;
-}
+      /* место под панель кнопок + зазор + клавиатуру */
+      height: calc(
+        100dvh
+        - 56px   /* заголовок h1 */
+        - 30px   /* подзаголовок/отступы */
+        - 70px   /* header + level selector */
+        - 48px   /* progress bar */
+        - var(--actions-h)
+        - var(--actions-bottom)
+        - var(--safe)
+      );
 
-.example input{
-  width: 60px;
-  height: 36px;
-  font-size: 1.2em;
-  border: 2px solid #667eea;
-  border-radius: 14px;
-  text-align: center;
-  background: #fff;
-}
+      padding-bottom: calc(var(--actions-gap) + 10px);
+      background: transparent;
 
-.example.correct{ outline: 3px solid rgba(0,200,0,0.35); }
-.example.incorrect{ outline: 3px solid rgba(255,0,0,0.3); }
+      /* hide scrollbars */
+      scrollbar-width: none; /* Firefox */
+      -webkit-mask-image: linear-gradient(to bottom,
+        rgba(0,0,0,0) 0px,
+        rgba(0,0,0,1) 8px,
+        rgba(0,0,0,1) calc(100% - 10px),
+        rgba(0,0,0,0) 100%);
+      mask-image: linear-gradient(to bottom,
+        rgba(0,0,0,0) 0px,
+        rgba(0,0,0,1) 8px,
+        rgba(0,0,0,1) calc(100% - 14px),
+        rgba(0,0,0,0) 100%);
+    }
+    #examples::-webkit-scrollbar{ width: 0; height: 0; }
 
-.button-row{
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 297px;
-  height: var(--actions-h);
-  margin: 0 var(--pad);
-  padding: 10px;
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  background: rgba(255,255,255,0.22);
-  backdrop-filter: blur(10px);
-  border-radius: 18px;
-  box-shadow: 0 -8px 20px rgba(0,0,0,0.12);
-  z-index: 998;
-}
+    /* Внутренний "фейд" снизу списка (приятный скролл) */
+    #examples{
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 16px, black calc(100% - 24px), transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0px, black 16px, black calc(100% - 24px), transparent 100%);
+    }
 
-.action-button{
-  flex: 1;
-  max-width: 260px;
-  padding: 14px;
-  border-radius: 18px;
-  border: none;
-  background: #667eea;
-  color: #fff;
-  font-size: 1.05em;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 10px 18px rgba(0,0,0,0.18);
-}
 
-.keypad{
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 12px var(--pad) calc(12px + var(--safe));
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(12px);
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  box-shadow: 0 -10px 24px rgba(0,0,0,0.18);
-  z-index: 999;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
+    .example{
+      margin: var(--gap) 0;
+      padding: 10px 8px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 16px;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+      font-size: 1.25em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+      min-height: 56px;
+    }
 
-.keypad button{
-  height: 56px;
-  font-size: 22px;
-  border-radius: 16px;
-  border: none;
-  background: #667eea;
-  color: #fff;
-  cursor: pointer;
-}
+    .example .expr{
+      font-size: 1.02em;
+      max-width: 84%;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
 
-.keypad button.secondary{ background: #764ba2; }
+    .example input{
+      width: 60px;
+      height: 36px;
+      font-size: 1.2em;
+      border: 2px solid #667eea;
+      border-radius: 14px;
+      text-align: center;
+      background: #fff;
+    }
 
-.result-overlay{
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
+    .example.correct{ outline: 3px solid rgba(0,200,0,0.35); }
+    .example.incorrect{ outline: 3px solid rgba(255,0,0,0.3); }
 
-.result-message{
-  background: #fff;
-  padding: 22px;
-  border-radius: 16px;
-  font-size: 1.5em;
-  color: #667eea;
-  text-align: center;
-}
+    .button-row{
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: var(--actions-bottom);
+      height: var(--actions-h);
+      margin: 0 var(--pad);
+      padding: 10px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      border-radius: 18px;
+      z-index: 998;
+      background: transparent;
+    }
 
-.firework{
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  animation: explode 5s ease-in-out;
-}
 
-@keyframes explode{
-  0%{ transform: scale(0); opacity: 1; }
-  50%{ transform: scale(20); opacity: 0.5; }
-  100%{ transform: scale(40); opacity: 0; }
-}
-  </style>
+    .action-button{
+      flex: 1;
+      max-width: 260px;
+      padding: 14px;
+      border-radius: 18px;
+      border: none;
+      background: #667eea;
+      color: #fff;
+      font-size: 1.05em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 10px 18px rgba(0,0,0,0.18);
+    }
+
+    .keypad{
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 12px var(--pad) calc(12px + var(--safe));
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      box-shadow: 0 -10px 24px rgba(0,0,0,0.18);
+      z-index: 999;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .keypad button{
+      height: 56px;
+      font-size: 22px;
+      border-radius: 16px;
+      border: none;
+      background: #667eea;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .keypad button.secondary{ background: #764ba2; }
+
+    .result-overlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .result-message{
+      background: #fff;
+      padding: 22px;
+      border-radius: 16px;
+      font-size: 1.5em;
+      color: #667eea;
+      text-align: center;
+    }
+
+    .firework{
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      animation: explode 5s ease-in-out;
+    }
+
+    @keyframes explode{
+      0%{ transform: scale(0); opacity: 1; }
+      50%{ transform: scale(20); opacity: 0.5; }
+      100%{ transform: scale(40); opacity: 0; }
+    }
+      
+
+    }
+    #examples::-webkit-scrollbar{
+      width: 0;
+      height: 0;
+    }
+    /* subtle fade at the top of the scroll area (nice on mobile) */
+    #examples{
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 18px, black 100%);
+      mask-image: linear-gradient(to bottom, transparent 0px, black 18px, black 100%);
+    }
+
+    /* hide "cut corner" under the action bar + add a soft fade */
+    .button-row{
+      overflow: hidden;
+      position: fixed; /* ensure pseudo-element positioning */
+    }
+</style>
 </head>
 
 <body>
@@ -356,9 +410,9 @@ h1{
         <div class="modal-close" onclick="closeMenu()">×</div>
       </div>
       <div class="modal-content">
-        <button id="multiplyBtn" onclick="setTab('multiply')">Умножение/Деление</button>
-        <button id="additionBtn" onclick="setTab('addition')">Сложение/Вычитание</button>
-        <button id="multiBtn" onclick="setTab('multi')">Многошаговые</button>
+        <button id="multiplyBtn" onclick="setTab('multiply')">Таблица умножения</button>
+        <button id="additionBtn" onclick="setTab('addition')">Таблица сложения</button>
+        <button id="multiBtn" onclick="setTab('multi')">Порядок действий</button>
       </div>
     </div>
   </div>
@@ -401,473 +455,568 @@ h1{
     <button class="secondary" onclick="kpClear()">C</button>
   </div>
 
-  <script>
-    let currentTab = 'multiply';
-    let currentLevel = 1;
-    let examples = [];
-    let activeInput = null;
+  
+<script>
 
-    function randInt(min, max){
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
 
-    function pickOp(preferMulDiv = true){
-      if (preferMulDiv){
-        return Math.random() < 0.65
-          ? (Math.random() < 0.5 ? '*' : '/')
-          : (Math.random() < 0.5 ? '+' : '-');
-      }
-      return Math.random() < 0.5 ? '+' : '-';
-    }
+  let currentTab = 'times';        // times | sums | order
+  let currentLevel = 1;            // для "Порядок действий": 1-3
+  let currentSub = 'mul';          // для times: mul|div|mix ; для sums: add|sub|mix          // для times: mul|div|mix ; для sums: add|sub|mix
+  let examples = [];
+  let activeInput = null;
 
-    function evalSafeFlat(tokens){
-      const arr = tokens.map(t => ({...t}));
+  function randInt(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
-      // 1) * /
-      let i = 0;
-      while (i < arr.length){
-        if (arr[i].type === 'op' && (arr[i].value === '*' || arr[i].value === '/')){
-          const op = arr[i].value;
-          const left = arr[i-1].value;
-          const right = arr[i+1].value;
+  // школьная проверка по порядку действий + запрет отрицательных промежуточных
+  function evalSafeFlat(tokens){
+    const arr = tokens.map(t => ({...t}));
 
-          let res;
-          if (op === '*'){
-            if (left > 10 || right > 10) return { ok:false };
-            res = left * right;
-          } else {
-            if (right === 0) return { ok:false };
-            if (left % right !== 0) return { ok:false };
-            res = left / right;
-            if (!Number.isInteger(res)) return { ok:false };
-            if (right > 10 || res > 10) return { ok:false };
-          }
+    // 1) * /
+    let i = 0;
+    while (i < arr.length){
+      if (arr[i].type === 'op' && (arr[i].value === '*' || arr[i].value === '/')){
+        const op = arr[i].value;
+        const left = arr[i-1].value;
+        const right = arr[i+1].value;
 
-          arr.splice(i-1, 3, { type:'num', value: res });
-          i = Math.max(0, i-2);
+        let res;
+        if (op === '*'){
+          if (left > 10 || right > 10) return { ok:false };
+          res = left * right;
         } else {
-          i++;
+          if (right === 0) return { ok:false };
+          if (left % right !== 0) return { ok:false };
+          res = left / right;
+          if (!Number.isInteger(res)) return { ok:false };
+          if (right > 10 || res > 10) return { ok:false };
         }
-      }
 
-      // 2) + -
-      let result = arr[0].value;
-      for (let j = 1; j < arr.length; j += 2){
-        const op = arr[j].value;
-        const num = arr[j+1].value;
-        if (op === '+') result += num;
-        else result -= num;
-        if (result < 0) return { ok:false };
-      }
-
-      return { ok:true, value: result };
-    }
-
-    function canUseNumber(n, freqMap){
-      let limit = 1;
-      if (currentTab === 'multiply') limit = 2;
-      if (currentTab === 'addition') limit = 2;
-      return (freqMap.get(n) || 0) < limit;
-    }
-    function addNumber(n, freqMap){
-      freqMap.set(n, (freqMap.get(n) || 0) + 1);
-    }
-
-    function toggleMenu() {
-      document.getElementById('modalOverlay').style.display = 'flex';
-    }
-    function closeMenu() {
-      document.getElementById('modalOverlay').style.display = 'none';
-    }
-
-    function setTab(tab) {
-      currentTab = tab;
-      closeMenu();
-      updateHeader();
-      generateLevelSelector();
-      generateExamples();
-
-      document.getElementById('multiplyBtn').classList.remove('active');
-      document.getElementById('additionBtn').classList.remove('active');
-      document.getElementById('multiBtn').classList.remove('active');
-      const btnId = tab === 'multiply' ? 'multiplyBtn' : tab === 'addition' ? 'additionBtn' : 'multiBtn';
-      document.getElementById(btnId).classList.add('active');
-    }
-
-    function setLevel(level) {
-      currentLevel = level;
-      generateExamples();
-      document.querySelectorAll('.level-selector button').forEach(btn => btn.classList.remove('active'));
-      const b = document.querySelector('.level-selector button[data-level="'+level+'"]');
-      if (b) b.classList.add('active');
-    }
-
-    function updateHeader() {
-      const header = document.getElementById('header');
-      if (currentTab === 'multi') header.textContent = 'Многошаговые';
-      else header.textContent = currentTab === 'multiply' ? 'Умножение/Деление' : 'Сложение/Вычитание';
-    }
-
-    function generateLevelSelector() {
-      const selector = document.getElementById('levelSelector');
-      if (currentTab === 'multi') {
-        selector.innerHTML = `
-          <button onclick="setLevel(1)" data-level="1">Легкий</button>
-          <button onclick="setLevel(2)" data-level="2">Средний</button>
-          <button onclick="setLevel(3)" data-level="3">Сложный</button>
-        `;
-        setTimeout(() => {
-          const b = document.querySelector('.level-selector button[data-level="'+currentLevel+'"]');
-          if (b) b.classList.add('active');
-        }, 0);
+        arr.splice(i-1, 3, { type:'num', value: res });
+        i = Math.max(0, i-2);
       } else {
-        selector.innerHTML = '';
+        i++;
       }
     }
 
-    function generateExamples() {
-      const container = document.getElementById('examples');
-      container.innerHTML = '';
-      examples = [];
-      activeInput = null;
+    // 2) + -
+    let result = arr[0].value;
+    for (let j = 1; j < arr.length; j += 2){
+      const op = arr[j].value;
+      const num = arr[j+1].value;
+      if (op === '+') result += num;
+      else result -= num;
+      if (result < 0) return { ok:false };
+    }
 
-      const count = currentTab === 'multi' ? 4 : 10;
-      const usedExpr = new Set();
-      const numberFreqMap = new Map();
+    return { ok:true, value: result };
+  }
 
-      for (let i = 0; i < count; i++) {
-        let expression = null, correct = null;
-        let attempts = 0;
+  // контроль повторов чисел: в таблицах допускаем число до 2 раз
+  function canUseNumber(n, freqMap){
+    const limit = (currentTab === 'order') ? 1 : 2;
+    return (freqMap.get(n) || 0) < limit;
+  }
+  function addNumber(n, freqMap){
+    freqMap.set(n, (freqMap.get(n) || 0) + 1);
+  }
 
-        while (attempts < 300) {
-          attempts++;
-          expression = null;
-          correct = null;
+  function toggleMenu() {
+    document.getElementById('modalOverlay').style.display = 'flex';
+  }
+  function closeMenu() {
+    document.getElementById('modalOverlay').style.display = 'none';
+  }
 
-          if (currentTab === 'multiply') {
-            // 6 умножений + 4 деления
-            const wantDiv = (i >= 6);
-            const op = wantDiv ? '/' : '*';
+  function setTab(tab) {
+    currentTab = tab;
 
-            let a, b;
+    
+    if(tab==='times') currentSub = 'mul';
+    if(tab==='sums') currentSub = 'add';
+// дефолты для подрежимов
+    if (tab === 'times') currentSub = 'mix';
+    if (tab === 'sums') currentSub = 'mix';
 
-            for (let t = 0; t < 350; t++) {
-              // оставляем x10 и /10, убираем 1
-              b = randInt(2, 10);
-              a = randInt(2, 10);
+    closeMenu();
+    updateHeader();
+    renderSelector();
+    generateExamples();
 
-              // убираем "на само себя"
-              if (a === b) continue;
+    // подсветка кнопок меню (используем существующие id)
+    document.getElementById('multiplyBtn').classList.remove('active');
+    document.getElementById('additionBtn').classList.remove('active');
+    document.getElementById('multiBtn').classList.remove('active');
 
-              if (!canUseNumber(a, numberFreqMap)) continue;
-              if (!canUseNumber(b, numberFreqMap)) continue;
+    const btnId = tab === 'times' ? 'multiplyBtn' : tab === 'sums' ? 'additionBtn' : 'multiBtn';
+    document.getElementById(btnId).classList.add('active');
+  }
 
-              if (op === '*') {
-                correct = a * b;
-                expression = `${a} * ${b}`;
-              } else {
-                const dividend = a * b;
-                correct = a;
-                expression = `${dividend} / ${b}`;
-              }
+  function setSub(sub){
+    currentSub = sub;
+    renderSelector();
+    generateExamples();
+  }
 
-              if (usedExpr.has(expression)) continue;
+  function setLevel(level) {
+    currentLevel = level;
+    renderSelector();
+    generateExamples();
+  }
 
-              usedExpr.add(expression);
-              addNumber(a, numberFreqMap);
-              addNumber(b, numberFreqMap);
-              break;
-            }
+  function updateHeader() {
+    const header = document.getElementById('header');
+    if (currentTab === 'order') header.textContent = 'Порядок действий';
+    else header.textContent = currentTab === 'times' ? 'Таблица умножения' : 'Таблица сложения';
+  }
+
+  // единый селектор: либо подрежимы, либо уровни сложности
+  function renderSelector() {
+    const selector = document.getElementById('levelSelector');
+
+    if (currentTab === 'times') {
+      // 3-й режим: "Смешанные" (умножение и деление вперемешку)
+      selector.innerHTML = `
+        <button onclick="setSub('mul')" data-sub="mul">Умножение</button>
+        <button onclick="setSub('div')" data-sub="div">Деление</button>
+        <button onclick="setSub('mix')" data-sub="mix">Смешанные</button>
+      `;
+      selector.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      const b = selector.querySelector(`button[data-sub="${currentSub}"]`);
+      if (b) b.classList.add('active');
+      return;
+    }
+
+    if (currentTab === 'sums') {
+      // 3-й режим: "Смешанные" (сложение и вычитание вперемешку)
+      selector.innerHTML = `
+        <button onclick="setSub('add')" data-sub="add">Сложение</button>
+        <button onclick="setSub('sub')" data-sub="sub">Вычитание</button>
+        <button onclick="setSub('mix')" data-sub="mix">Смешанные</button>
+      `;
+      selector.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      const b = selector.querySelector(`button[data-sub="${currentSub}"]`);
+      if (b) b.classList.add('active');
+      return;
+    }
+
+    // order
+    selector.innerHTML = `
+      <button onclick="setLevel(1)" data-level="1">Легкий</button>
+      <button onclick="setLevel(2)" data-level="2">Средний</button>
+      <button onclick="setLevel(3)" data-level="3">Сложный</button>
+    `;
+    selector.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    const b = selector.querySelector(`button[data-level="${currentLevel}"]`);
+    if (b) b.classList.add('active');
+  }
+
+  function generateExamples() {
+    const container = document.getElementById('examples');
+    container.innerHTML = '';
+    examples = [];
+    activeInput = null;
+
+    const count = (currentTab === 'order') ? 4 : 10;
+
+    const usedExpr = new Set();
+    const pairUsed = new Set();     // чтобы не повторять пары (a,op,b)
+    const numberFreqMap = new Map();
+
+    function addExample(expression, correct){
+      const exampleDiv = document.createElement('div');
+      exampleDiv.className = 'example';
+      exampleDiv.innerHTML = `
+        <span class="expr">${expression} =</span>
+        <input
+          type="text"
+          readonly
+          inputmode="none"
+          data-correct="${correct}"
+          onclick="setActive(this)"
+          onfocus="this.blur()"
+          placeholder="?"
+        >
+      `;
+      exampleDiv.onclick = () => setActive(exampleDiv.querySelector('input'));
+
+      container.appendChild(exampleDiv);
+      examples.push({ div: exampleDiv, correct: correct });
+    }
+
+    for (let i = 0; i < count; i++) {
+      let expression = null, correct = null;
+
+      // ===== Таблица умножения =====
+      if (currentTab === 'times') {
+        let op = '*';
+        if (currentSub === 'mul') op = '*';
+        if (currentSub === 'div') op = '/';
+        if (currentSub === 'mix') op = (i < 5 ? '*' : '/'); // 5* + 5/
+
+        for (let t = 0; t < 500; t++){
+          let a = randInt(2, 10);
+          let b = randInt(2, 10);  // деление/умножение на 10 оставляем
+          if (a === b) continue;   // убираем a*a и a/a
+          if (!canUseNumber(a, numberFreqMap)) continue;
+          if (!canUseNumber(b, numberFreqMap)) continue;
+
+          if (op === '*'){
+            expression = `${a} * ${b}`;
+            correct = a * b;
+          } else {
+            const dividend = a * b;   // деление без остатка из таблицы
+            expression = `${dividend} / ${b}`;
+            correct = a;
           }
 
-          else if (currentTab === 'addition') {
-            const op = Math.random() < 0.5 ? '+' : '-';
-            let a, b;
+          const keyPair = `${op}:${a}:${b}`;
+          if (pairUsed.has(keyPair)) continue;
+          if (usedExpr.has(expression)) continue;
 
-            for (let t = 0; t < 160; t++){
-              a = randInt(0, 20);
-              b = randInt(0, 20);
-
-              if (!canUseNumber(a, numberFreqMap)) continue;
-              if (!canUseNumber(b, numberFreqMap)) continue;
-
-              if (op === '-' && a < b) continue;
-
-              correct = (op === '+') ? (a + b) : (a - b);
-              expression = `${a} ${op} ${b}`;
-
-              if (usedExpr.has(expression)) continue;
-
-              usedExpr.add(expression);
-              addNumber(a, numberFreqMap);
-              addNumber(b, numberFreqMap);
-              break;
-            }
-          }
-
-          else if (currentTab === 'multi') {
-            const use2Brackets = currentLevel >= 3;
-
-            function makeBracket(){
-              const opIn = Math.random() < 0.5 ? '+' : '-';
-              let x, y, val;
-
-              for (let t = 0; t < 180; t++){
-                x = randInt(1, 10);
-                y = randInt(1, 10);
-
-                if (!canUseNumber(x, numberFreqMap)) continue;
-                if (!canUseNumber(y, numberFreqMap)) continue;
-
-                if (opIn === '-'){
-                  if (x <= y) continue;
-                  val = x - y;
-                } else {
-                  val = x + y;
-                }
-                if (val <= 0) continue;
-
-                addNumber(x, numberFreqMap);
-                addNumber(y, numberFreqMap);
-                return { text: `(${x} ${opIn} ${y})`, value: val };
-              }
-              return { text: `(9 - 3)`, value: 6 };
-            }
-
-            function makeNumber(){
-              for (let t = 0; t < 140; t++){
-                const n = randInt(1, 10);
-                if (!canUseNumber(n, numberFreqMap)) continue;
-                addNumber(n, numberFreqMap);
-                return n;
-              }
-              return randInt(1, 10);
-            }
-
-            function buildExpression(){
-              const b1 = makeBracket();
-              const b2 = use2Brackets ? makeBracket() : null;
-
-              let terms = [];
-              if (currentLevel === 1){
-                const n1 = makeNumber();
-                const n2 = makeNumber();
-                terms = [ {text: `${n1}`, value: n1}, b1, {text: `${n2}`, value: n2} ];
-              } else if (currentLevel === 2){
-                const n1 = makeNumber();
-                const n2 = makeNumber();
-                terms = [ b1, {text: `${n1}`, value: n1}, {text: `${n2}`, value: n2} ];
-              } else {
-                const n1 = makeNumber();
-                const n2 = makeNumber();
-                terms = [ b1, b2, {text: `${n1}`, value: n1}, {text: `${n2}`, value: n2} ];
-              }
-
-              let ops = [];
-              let lastOp = null;
-              for (let i = 0; i < terms.length - 1; i++){
-                let op;
-                for (let t = 0; t < 80; t++){
-                  op = pickOp(true);
-                  if (op === lastOp) continue;
-                  lastOp = op;
-                  break;
-                }
-                ops.push(op);
-              }
-
-              for (let i = 0; i < ops.length; i++){
-                if (ops[i] === '/'){
-                  const left = terms[i].value;
-                  let right = terms[i+1].value;
-
-                  let found = false;
-                  for (let d = 2; d <= 10; d++){
-                    if (left % d === 0){
-                      right = d;
-                      found = true;
-                      break;
-                    }
-                  }
-                  if (!found) right = 2;
-                  terms[i+1] = { text: `${right}`, value: right };
-                }
-              }
-
-              const tokens = [];
-              for (let i = 0; i < terms.length; i++){
-                tokens.push({ type:'num', value: terms[i].value });
-                if (i < ops.length) tokens.push({ type:'op', value: ops[i] });
-              }
-              const r = evalSafeFlat(tokens);
-              if (!r.ok) return null;
-
-              const parts = [];
-              for (let i = 0; i < terms.length; i++){
-                parts.push(terms[i].text);
-                if (i < ops.length) parts.push(ops[i]);
-              }
-              return { expression: parts.join(' '), correct: r.value };
-            }
-
-            let built = null;
-            for (let t = 0; t < 220; t++){
-              built = buildExpression();
-              if (built) break;
-            }
-            if (!built) continue;
-
-            expression = built.expression;
-            correct = built.correct;
-          }
-
-          if (expression && correct !== null) break;
+          pairUsed.add(keyPair);
+          usedExpr.add(expression);
+          addNumber(a, numberFreqMap);
+          addNumber(b, numberFreqMap);
+          break;
         }
 
         // fallback
-        if (!expression) {
-          if (currentTab === 'multiply') {
-            const op = Math.random() < 0.6 ? '*' : '/';
-            const b = randInt(2, 10);
-            const k = randInt(2, 10);
-            const a = b * k;
-            if (op === '*') { expression = `${b} * ${k}`; correct = b * k; }
-            else { expression = `${a} / ${b}`; correct = a / b; }
-          } else if (currentTab === 'addition') {
-            const op = Math.random() < 0.5 ? '+' : '-';
-            let a = randInt(0, 20), b = randInt(0, 20);
-            if (op === '-' && a < b) { [a,b] = [b,a]; }
-            expression = `${a} ${op} ${b}`;
-            correct = op === '+' ? a + b : a - b;
+        if (!expression){
+          const b = randInt(2, 10);
+          const a = randInt(2, 10);
+          if (op === '*'){ expression = `${b} * ${a}`; correct = b*a; }
+          else { expression = `${b*a} / ${b}`; correct = a; }
+        }
+
+        addExample(expression, correct);
+        continue;
+      }
+
+      // ===== Таблица сложения =====
+      if (currentTab === 'sums') {
+        let op = '+';
+        if (currentSub === 'add') op = '+';
+        if (currentSub === 'sub') op = '-';
+        if (currentSub === 'mix') op = (Math.random() < 0.5 ? '+' : '-');
+
+        for (let t = 0; t < 500; t++){
+          let a = randInt(0, 20);
+          let b = randInt(0, 20);
+          if (!canUseNumber(a, numberFreqMap)) continue;
+          if (!canUseNumber(b, numberFreqMap)) continue;
+
+          if (op === '+'){
+            if (a + b > 20) continue;
+            expression = `${a} + ${b}`;
+            correct = a + b;
           } else {
-            expression = `(9 - 3) + 4 * 2`;
-            correct = (9 - 3) + 4 * 2;
+            if (a < b) continue;
+            expression = `${a} - ${b}`;
+            correct = a - b;
+          }
+
+          const keyPair = `${op}:${a}:${b}`;
+          if (pairUsed.has(keyPair)) continue;
+          if (usedExpr.has(expression)) continue;
+
+          pairUsed.add(keyPair);
+          usedExpr.add(expression);
+          addNumber(a, numberFreqMap);
+          addNumber(b, numberFreqMap);
+          break;
+        }
+
+        // fallback
+        if (!expression){
+          const a = randInt(0, 20);
+          const b = randInt(0, 20);
+          if (op === '+'){
+            const bb = Math.min(b, 20 - a);
+            expression = `${a} + ${bb}`;
+            correct = a + bb;
+          } else {
+            const aa = Math.max(a, b);
+            const bb = Math.min(a, b);
+            expression = `${aa} - ${bb}`;
+            correct = aa - bb;
           }
         }
 
-        const exampleDiv = document.createElement('div');
-        exampleDiv.className = 'example';
-        exampleDiv.innerHTML = `
-          <span class="expr">${expression} =</span>
-          <input
-            type="text"
-            readonly
-            inputmode="none"
-            data-correct="${correct}"
-            onclick="setActive(this)"
-            onfocus="this.blur()"
-            placeholder="?"
-          >
-        `;
-        exampleDiv.onclick = () => setActive(exampleDiv.querySelector('input'));
-
-        container.appendChild(exampleDiv);
-        examples.push({ div: exampleDiv, correct: correct });
+        addExample(expression, correct);
+        continue;
       }
 
-      updateProgress();
-      setTimeout(() => {
+      // ===== Порядок действий =====
+      if (currentTab === 'order') {
+        const use2Brackets = currentLevel >= 3;
+
+        function makeBracket(){
+          const opIn = Math.random() < 0.5 ? '+' : '-';
+          let x, y, val;
+
+          for (let t = 0; t < 220; t++){
+            x = randInt(1, 10);
+            y = randInt(1, 10);
+
+            if (!canUseNumber(x, numberFreqMap)) continue;
+            if (!canUseNumber(y, numberFreqMap)) continue;
+
+            if (opIn === '-'){
+              if (x <= y) continue;
+              val = x - y;
+            } else {
+              val = x + y;
+            }
+            if (val <= 0) continue;
+
+            addNumber(x, numberFreqMap);
+            addNumber(y, numberFreqMap);
+            return { text: `(${x} ${opIn} ${y})`, value: val };
+          }
+          return { text: `(9 - 3)`, value: 6 };
+        }
+
+        function makeNumber(){
+          for (let t = 0; t < 200; t++){
+            const n = randInt(1, 10);
+            if (!canUseNumber(n, numberFreqMap)) continue;
+            addNumber(n, numberFreqMap);
+            return n;
+          }
+          return randInt(1, 10);
+        }
+
+        function buildExpression(){
+          const b1 = makeBracket();
+          const b2 = use2Brackets ? makeBracket() : null;
+
+          let terms = [];
+          if (currentLevel === 1){
+            const n1 = makeNumber();
+            const n2 = makeNumber();
+            terms = [ {text: `${n1}`, value: n1}, b1, {text: `${n2}`, value: n2} ];
+          } else if (currentLevel === 2){
+            const n1 = makeNumber();
+            const n2 = makeNumber();
+            terms = [ b1, {text: `${n1}`, value: n1}, {text: `${n2}`, value: n2} ];
+          } else {
+            const n1 = makeNumber();
+            const n2 = makeNumber();
+            terms = [ b1, b2, {text: `${n1}`, value: n1}, {text: `${n2}`, value: n2} ];
+          }
+
+          // вне скобок — меняем знаки, и чаще * /
+          const ops = [];
+          let last = null;
+          for (let i = 0; i < terms.length - 1; i++){
+            let op;
+            for (let t = 0; t < 120; t++){
+              op = (Math.random() < 0.7) ? (Math.random() < 0.5 ? '*' : '/') : (Math.random() < 0.5 ? '+' : '-');
+              if (op === last) continue;
+              last = op;
+              break;
+            }
+            ops.push(op);
+          }
+
+          // деление — делится нацело
+          for (let i = 0; i < ops.length; i++){
+            if (ops[i] === '/'){
+              const left = terms[i].value;
+              let right = terms[i+1].value;
+
+              let found = false;
+              for (let d = 2; d <= 10; d++){
+                if (left % d === 0){
+                  right = d;
+                  found = true;
+                  break;
+                }
+              }
+              if (!found) right = 2;
+              terms[i+1] = { text: `${right}`, value: right };
+            }
+          }
+
+          const tokens = [];
+          for (let i = 0; i < terms.length; i++){
+            tokens.push({ type:'num', value: terms[i].value });
+            if (i < ops.length) tokens.push({ type:'op', value: ops[i] });
+          }
+          const r = evalSafeFlat(tokens);
+          if (!r.ok) return null;
+
+          const parts = [];
+          for (let i = 0; i < terms.length; i++){
+            parts.push(terms[i].text);
+            if (i < ops.length) parts.push(ops[i]);
+          }
+          return { expression: parts.join(' '), correct: r.value };
+        }
+
+        let built = null;
+        for (let t = 0; t < 260; t++){
+          built = buildExpression();
+          if (built) break;
+        }
+        if (!built){
+          expression = `(9 - 3) + 4 * 2`;
+          correct = (9 - 3) + 4 * 2;
+        } else {
+          expression = built.expression;
+          correct = built.correct;
+        }
+
+        addExample(expression, correct);
+        continue;
+      }
+    }
+
+    updateProgress();
+    setTimeout(() => {
+      const first = document.querySelector('.example input');
+      if (first) setActive(first);
+    }, 0);
+  }
+
+  function setActive(el){
+    activeInput = el;
+    document.querySelectorAll('.example input').forEach(i => i.style.outline = 'none');
+    el.style.outline = '3px solid rgba(102,126,234,0.5)';
+
+    // мягкий автоскролл, если активный пример вне видимой области
+    const card = el.closest('.example');
+    if (!card) return;
+
+    const r = card.getBoundingClientRect();
+    const topSafe = 140; // шапка + переключатели
+    const bottomSafe = window.innerHeight - 340; // кнопки + клавиатура
+
+    if (r.top < topSafe || r.bottom > bottomSafe){
+      card.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  }
+
+  // ===== KEYPAD LOGIC =====
+  
+  function kp(ch){
+    if(!activeInput){
+      const firstEmpty = [...document.querySelectorAll('.example input')].find(i => i.value === '');
+      if(firstEmpty) setActive(firstEmpty);
+      else {
         const first = document.querySelector('.example input');
         if (first) setActive(first);
-      }, 0);
-    }
-
-    function setActive(el){
-      activeInput = el;
-      document.querySelectorAll('.example input').forEach(i => i.style.outline = 'none');
-      el.style.outline = '3px solid rgba(102,126,234,0.5)';
-    }
-
-    function kp(ch){
-      if(!activeInput){
-        const firstEmpty = [...document.querySelectorAll('.example input')].find(i => i.value === '');
-        if(firstEmpty) setActive(firstEmpty);
-        else {
-          const first = document.querySelector('.example input');
-          if (first) setActive(first);
-        }
-      }
-      if (!activeInput) return;
-      if (activeInput.value.length >= 3) return;
-      activeInput.value += ch;
-      updateProgress();
-    }
-
-    function kpBack(){
-      if(!activeInput) return;
-      activeInput.value = activeInput.value.slice(0, -1);
-      updateProgress();
-    }
-
-    function kpClear(){
-      if(!activeInput) return;
-      activeInput.value = '';
-      updateProgress();
-    }
-
-    function checkAll() {
-      let correctCount = 0;
-
-      examples.forEach(item => {
-        const input = item.div.querySelector('input');
-        const correct = parseInt(input.dataset.correct);
-        const user = parseInt(input.value);
-
-        if (!Number.isNaN(user) && user === correct) {
-          item.div.classList.add('correct');
-          item.div.classList.remove('incorrect');
-          correctCount++;
-        } else {
-          item.div.classList.add('incorrect');
-          item.div.classList.remove('correct');
-        }
-      });
-
-      const percent = (correctCount / examples.length) * 100;
-      const overlay = document.getElementById('resultOverlay');
-      const message = document.getElementById('resultMessage');
-
-      overlay.style.display = 'flex';
-
-      if (percent === 100) message.textContent = '🎉 Ура! 100%';
-      else if (percent >= 80) message.textContent = `👏 Отлично! ${Math.round(percent)}%`;
-      else if (percent >= 70) message.textContent = `💪 Хорошо! ${Math.round(percent)}%`;
-      else message.textContent = `Попробуй еще раз: ${Math.round(percent)}%`;
-
-      launchFireworks();
-      setTimeout(() => { overlay.style.display = 'none'; }, 2500);
-    }
-
-    function launchFireworks() {
-      const fireworks = document.getElementById('fireworks');
-      fireworks.innerHTML = '';
-      for (let i = 0; i < 20; i++) {
-        const firework = document.createElement('div');
-        firework.className = 'firework';
-        firework.style.left = Math.random() * 100 + '%';
-        firework.style.top = Math.random() * 100 + '%';
-        firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-        fireworks.appendChild(firework);
       }
     }
+    if (!activeInput) return;
 
-    function updateProgress() {
-      const filled = examples.filter(item => item.div.querySelector('input').value !== '').length;
-      const total = examples.length;
-      const percent = total ? (filled / total) * 100 : 0;
+    const correctStr = activeInput.dataset.correct ? String(activeInput.dataset.correct) : "";
+    const targetLen = Math.max(1, correctStr.length);
 
-      document.getElementById('progressFill').style.width = percent + '%';
-      document.getElementById('rocket').style.right = (100 - percent) + '%';
-      document.getElementById('rocket').style.transform = 'translateY(-50%) translateX(26px)';
-      document.getElementById('rocket').style.left = 'auto';
+    if (activeInput.value.length >= targetLen) return;
+
+    activeInput.value += ch;
+    updateProgress();
+
+    if (activeInput.value.length >= targetLen){
+      const inputs = [...document.querySelectorAll('.example input')];
+      const idx = inputs.indexOf(activeInput);
+
+      let next = null;
+      for (let j = idx + 1; j < inputs.length; j++){
+        if (inputs[j].value === '') { next = inputs[j]; break; }
+      }
+      if (!next && idx + 1 < inputs.length) next = inputs[idx + 1];
+      if (next) setActive(next);
     }
+  }
 
-    // init
-    setTab('multiply');
-    document.getElementById('progressFill').style.width = '0%';
-    document.getElementById('rocket').style.right = '100%';
+function kpBack(){
+    if(!activeInput) return;
+    activeInput.value = activeInput.value.slice(0, -1);
+    updateProgress();
+  }
+
+  function kpClear(){
+    if(!activeInput) return;
+    activeInput.value = '';
+    updateProgress();
+  }
+
+  function checkAll() {
+    let correctCount = 0;
+
+    examples.forEach(item => {
+      const input = item.div.querySelector('input');
+      const correct = parseInt(input.dataset.correct);
+      const user = parseInt(input.value);
+
+      if (!Number.isNaN(user) && user === correct) {
+        item.div.classList.add('correct');
+        item.div.classList.remove('incorrect');
+        correctCount++;
+      } else {
+        item.div.classList.add('incorrect');
+        item.div.classList.remove('correct');
+      }
+    });
+
+    const percent = (correctCount / examples.length) * 100;
+    const overlay = document.getElementById('resultOverlay');
+    const message = document.getElementById('resultMessage');
+
+    overlay.style.display = 'flex';
+
+    if (percent === 100) message.textContent = '🎉 Ура! 100%';
+    else if (percent >= 80) message.textContent = `👏 Отлично! ${Math.round(percent)}%`;
+    else if (percent >= 70) message.textContent = `💪 Хорошо! ${Math.round(percent)}%`;
+    else message.textContent = `Попробуй еще раз: ${Math.round(percent)}%`;
+
+    launchFireworks();
+    setTimeout(() => { overlay.style.display = 'none'; }, 2500);
+  }
+
+  function launchFireworks() {
+    const fireworks = document.getElementById('fireworks');
+    fireworks.innerHTML = '';
+    for (let i = 0; i < 20; i++) {
+      const firework = document.createElement('div');
+      firework.className = 'firework';
+      firework.style.left = Math.random() * 100 + '%';
+      firework.style.top = Math.random() * 100 + '%';
+      firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+      fireworks.appendChild(firework);
+    }
+  }
+
+  function updateProgress() {
+    const filled = examples.filter(item => item.div.querySelector('input').value !== '').length;
+    const total = examples.length;
+    const percent = total ? (filled / total) * 100 : 0;
+
+    document.getElementById('progressFill').style.width = percent + '%';
+    document.getElementById('rocket').style.right = (100 - percent) + '%';
     document.getElementById('rocket').style.transform = 'translateY(-50%) translateX(26px)';
     document.getElementById('rocket').style.left = 'auto';
-  </script>
+  }
+
+  // init
+  updateHeader();
+  renderSelector();
+  generateExamples();
+  // map old tabs (если в HTML остались старые onclick)
+  const _setTab = setTab;
+  window.setTab = function(tab){
+    if (tab === 'multiply') return _setTab('times');
+    if (tab === 'addition') return _setTab('sums');
+    if (tab === 'multi') return _setTab('order');
+    return _setTab(tab);
+  };
+
+
+</script>
+
 </body>
 </html>
