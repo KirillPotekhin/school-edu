@@ -410,21 +410,49 @@
     }
 
     /* Добавление картинки загрузки */
-    #splash {
+    #splash{
       position: fixed;
       inset: 0;
       z-index: 9999;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: rgba(180, 225, 255, 0.95);
+      display: grid;
+      place-items: center;
+      opacity: 1;
     }
 
-    #splash img {
-      width: 70%;
-      max-width: 320px;
+    #splash .splash-bg{
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    /* Группа по центру */
+    #splash .splash-stack{
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;   /* вертикальная группа */
+      gap: 14px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    /* Заголовок крупнее, в стиле приложения */
+    #splash .splash-title{
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.5px;
+      text-shadow: 0 10px 22px rgba(0,0,0,0.28);
+      font-size: clamp(40px, 7vw, 64px);
+      line-height: 1.05;
+    }
+
+    /* Гусь — крупный, но без обрезки */
+    #splash .splash-goose{
+      width: min(78vw, 520px);
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 16px 30px rgba(0,0,0,0.28));
     }
 
 </style>
@@ -432,8 +460,14 @@
 
 <body>
   <div id="splash">
-    <img src="img/splash-math-goose.png" alt="Математика">
+    <div class="splash-bg"></div>
+
+    <div class="splash-stack" role="img" aria-label="Математика">
+      <div class="splash-title">Математика</div>
+      <img class="splash-goose" src="img/goose.png" alt="">
+    </div>
   </div>
+  
   <div class="menu" onclick="toggleMenu()">☰</div>
 
   <div class="modal-overlay" id="modalOverlay" onclick="closeMenu()">
@@ -1073,16 +1107,21 @@ function kpBack(){
     const s = sec % 60;
     return `Время: ${m} мин ${s} сек`;
   }
+
   window.addEventListener('load', () => {
     const splash = document.getElementById('splash');
     if (!splash) return;
 
-    splash.style.opacity = '0';
-    splash.style.transition = 'opacity 0.4s ease';
+    const MIN_SHOW_MS = 1200;
+    const FADE_MS = 900;
 
-    setTimeout(() => {
-      splash.remove();
-    }, 400);
+    const hide = () => {
+      splash.style.transition = `opacity ${FADE_MS}ms ease`;
+      splash.style.opacity = '0';
+      setTimeout(() => splash.remove(), FADE_MS);
+    };
+
+    setTimeout(hide, MIN_SHOW_MS);
   });
 
 </script>
