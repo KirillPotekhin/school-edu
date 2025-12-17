@@ -723,6 +723,8 @@
     const pairUsed = new Set();     // чтобы не повторять пары (a,op,b)
     const numberFreqMap = new Map();
 
+    const usedBracketText = new Set(); // уникальные скобки в пределах текущего блока
+
     function addExample(expression, correct){
       const exampleDiv = document.createElement('div');
       exampleDiv.className = 'example';
@@ -851,17 +853,15 @@
       if (currentTab === 'order') {
         const use2Brackets = currentLevel >= 3;
 
-        function makeBracket(){
-          const opIn = Math.random() < 0.5 ? '+' : '-';
-          let x, y, val;
+        function makeBracket(excludeText = null){
+          let x, y, val, opIn, text;
 
-          for (let t = 0; t < 220; t++){
+          for (let t = 0; t < 400; t++){
+            opIn = Math.random() < 0.5 ? '+' : '-';
             x = randInt(1, 10);
             y = randInt(1, 10);
 
-            if (!canUseNumber(x, numberFreqMap)) continue;
-            if (!canUseNumber(y, numberFreqMap)) continue;
-
+            // внутри скобок: если вычитание — только положительный результат
             if (opIn === '-'){
               if (x <= y) continue;
               val = x - y;
@@ -870,12 +870,39 @@
             }
             if (val <= 0) continue;
 
+            text = `(${x} ${opIn} ${y})`;
+
+            // запрет повторов скобок в блоке
+            if (usedBracketText.has(text)) continue;
+
+            // запрет одинаковой скобки в одном выражении (b2 == b1)
+            if (excludeText && text === excludeText) continue;
+
+            // твои ограничения по частоте чисел
+            if (!canUseNumber(x, numberFreqMap)) continue;
+            if (!canUseNumber(y, numberFreqMap)) continue;
+
             addNumber(x, numberFreqMap);
             addNumber(y, numberFreqMap);
-            return { text: `(${x} ${opIn} ${y})`, value: val };
+
+            usedBracketText.add(text);
+            return { text, value: val };
           }
-          return { text: `(9 - 3)`, value: 6 };
+
+          // fallback: не фиксированный (9-3), а уникальный
+          for (let t = 0; t < 200; t++){
+            const xx = randInt(2, 10);
+            const yy = randInt(1, xx - 1);
+            const fbText = `(${xx} - ${yy})`;
+            if (excludeText && fbText === excludeText) continue;
+            if (usedBracketText.has(fbText)) continue;
+            usedBracketText.add(fbText);
+            return { text: fbText, value: xx - yy };
+          }
+
+          return { text: `(8 - 1)`, value: 7 };
         }
+
 
         function makeNumber(){
           for (let t = 0; t < 200; t++){
@@ -889,7 +916,7 @@
 
         function buildExpression(){
           const b1 = makeBracket();
-          const b2 = use2Brackets ? makeBracket() : null;
+          const b2 = use2Brackets ? makeBracket(b1.text) : null;
 
           let terms = [];
           if (currentLevel === 1){
@@ -1270,36 +1297,6 @@ function kpBack(){
     splashRevealContentWhenReady();
     splashStartSafetyTimer();
   }
-
-  /* =======================
-     КАК ПОДКЛЮЧИТЬ В ТВОЁМ КОДЕ
-     =======================
-
-  1) В конце инициализации (где у тебя сейчас):
-     updateHeader();
-     renderSelector();
-     generateExamples();
-
-     добавь:
-     splashInitOnce();
-
-  2) Когда ты считаешь, что приложение точно готово и можно убирать splash,
-     вызови:
-     splashAppReady();
-
-     Обычно лучше сразу после generateExamples() и первого setActive(...),
-     т.е. после того как DOM уже заполнился.
-
-  Пример:
-     updateHeader();
-     renderSelector();
-     generateExamples();
-     splashInitOnce();
-
-     // После первой отрисовки — скрываем
-     requestAnimationFrame(() => splashAppReady());
-
-  */
   splashInitOnce();
 </script>
 
