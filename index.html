@@ -408,10 +408,32 @@
       overflow: hidden;
       position: fixed; /* ensure pseudo-element positioning */
     }
+
+    /* Добавление картинки загрузки */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: rgba(180, 225, 255, 0.95);
+    }
+
+    #splash img {
+      width: 70%;
+      max-width: 320px;
+    }
+
 </style>
 </head>
 
 <body>
+  <div id="splash">
+    <img src="img/splash-math-goose.png" alt="Математика">
+  </div>
   <div class="menu" onclick="toggleMenu()">☰</div>
 
   <div class="modal-overlay" id="modalOverlay" onclick="closeMenu()">
@@ -1051,6 +1073,17 @@ function kpBack(){
     const s = sec % 60;
     return `Время: ${m} мин ${s} сек`;
   }
+  window.addEventListener('load', () => {
+    const splash = document.getElementById('splash');
+    if (!splash) return;
+
+    splash.style.opacity = '0';
+    splash.style.transition = 'opacity 0.4s ease';
+
+    setTimeout(() => {
+      splash.remove();
+    }, 400);
+  });
 
 </script>
 
