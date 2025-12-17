@@ -4,304 +4,358 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Математика для детей</title>
-
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
   <style>
-    :root{
-      --pad: 12px;
-      --keypad-h: 240px;
-    }
+:root{
+  --pad: 20px;
+  --gap: 12px;
+  --keypad-h: 210px;
+  --actions-h: 64px;
+  --actions-gap: 14px;
+  --safe: env(safe-area-inset-bottom, 0px);
+}
+*{ box-sizing: border-box; }
 
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 0 var(--pad);
-      margin: 0;
-      color: #333;
-      height: 100dvh;
-      overflow: hidden;
-    }
+body{
+  font-family: system-ui, -apple-system, "Nunito", sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0 var(--pad);
+  margin: 0;
+  color: #333;
+  height: 100dvh;
+  overflow: hidden;
+  position: relative;
+}
 
-    h1 {
-      text-align: center;
-      font-size: 1.8em;
-      color: #fff;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-      margin: 10px 0 6px 0;
-      height: 1.8em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+h1{
+  text-align: center;
+  font-size: 1.9em;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  margin: 10px 0 6px 0;
+  height: 1.9em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .menu {
-      position: absolute;
-      top: 5px;
-      left: 12px;
-      height: 1.8em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5em;
-      color: #fff;
-      cursor: pointer;
-      user-select: none;
-    }
+.menu{
+  position: absolute;
+  top: 6px;
+  left: var(--pad);
+  font-size: 2.4em;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  z-index: 50;
+}
 
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 200;
-      justify-content: center;
-      align-items: center;
-    }
-    .modal {
-      background: white;
-      width: 80%;
-      max-width: 300px;
-      height: 50vh;
-      border-radius: 12px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-      overflow: hidden;
-      position: relative;
-    }
-    .modal-header {
-      background: #667eea;
-      color: white;
-      padding: 10px;
-      text-align: center;
-      font-size: 1.2em;
-    }
-    .modal-close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 1.2em;
-      color: white;
-      cursor: pointer;
-    }
-    .modal-content {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .modal-content button {
-      padding: 10px 14px;
-      border: none;
-      border-radius: 8px;
-      background: #667eea;
-      color: white;
-      cursor: pointer;
-      font-size: 0.95em;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .modal-content button.active {
-      box-shadow: 0 0 8px rgba(0,0,0,0.4);
-    }
+.modal-overlay{
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+}
 
-    .header {
-      text-align: center;
-      font-size: 1.1em;
-      color: #fff;
-      margin-bottom: 8px;
-    }
+.modal{
+  background: #fff;
+  width: 82%;
+  max-width: 320px;
+  height: 50vh;
+  border-radius: 14px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  overflow: hidden;
+  position: relative;
+}
 
-    .level-selector {
-      text-align: center;
-      margin: 6px 0 8px 0;
-    }
-    .level-selector button {
-      margin: 0 5px;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 8px;
-      background: #667eea;
-      color: white;
-      cursor: pointer;
-    }
-    .level-selector button.active {
-      box-shadow: 0 0 8px rgba(0,0,0,0.4);
-    }
+.modal-header{
+  background: #667eea;
+  color: #fff;
+  padding: 12px;
+  text-align: center;
+  font-size: 1.2em;
+}
 
-    .progress-bar {
-      width: 100%;
-      height: 20px;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 10px;
-      margin: 8px 0 12px 0;
-      overflow: visible;
-      position: relative;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      background: #e666ea;
-      width: 0%;
-      transition: width 0.5s;
-      border-radius: 10px;
-    }
-    .progress-icon {
-      position: absolute;
-      top: 50%;
-      right: 0;
-      transform: translateY(-50%) translateX(25px);
-      background: #fecfff;
-      border-radius: 50%;
-      width: 46px;
-      height: 46px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2);
-      z-index: 10;
-    }
-    .progress-icon img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-    }
+.modal-close{
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 1.2em;
+  color: #fff;
+  cursor: pointer;
+}
 
-    /* Примеры — отдельная прокручиваемая зона */
-    #examples{
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      height: calc(100dvh - 52px - 34px - 46px - 12px - 58px - var(--keypad-h));
-      padding-bottom: 10px;
-    }
+.modal-content{
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-    .example {
-      margin: 8px 0;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-      font-size: 1.05em;
-      text-align: center;
+.modal-content button{
+  padding: 12px 14px;
+  border: none;
+  border-radius: 10px;
+  background: #667eea;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1em;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      user-select: none;
-      cursor: pointer;
-    }
+.modal-content button.active{
+  box-shadow: 0 0 8px rgba(0,0,0,0.4);
+}
 
-    .example .expr{
-      max-width: 100%;
-      overflow-x: auto;
-      white-space: nowrap;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 4px;
-    }
+.header{
+  text-align: center;
+  font-size: 1.15em;
+  color: #fff;
+  margin: 0 0 6px 0;
+}
 
-    .example input {
-      width: 84px;
-      height: 42px;
-      font-size: 20px;
-      border: 2px solid #667eea;
-      border-radius: 12px;
-      text-align: center;
-      background: #fff;
-    }
+.level-selector{
+  text-align: center;
+  margin: 6px 0 10px 0;
+}
 
-    .example.correct { outline: 3px solid rgba(0, 200, 0, 0.35); }
-    .example.incorrect { outline: 3px solid rgba(255, 0, 0, 0.30); }
+.level-selector button{
+  margin: 0 6px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.16);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+  backdrop-filter: blur(6px);
+  font-size: 1em;
+}
 
-    .button-row {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 10px 0 0 0;
-      padding-bottom: calc(var(--keypad-h) + 10px); /* чтобы кнопки не перекрылись панелью */
-    }
+.level-selector button.active{
+  background: rgba(255,255,255,0.28);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.22);
+}
 
-    .action-button {
-      padding: 10px 18px;
-      border: none;
-      border-radius: 20px;
-      background: #667eea;
-      color: white;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      transition: transform 0.2s;
-      font-size: 1em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .action-button:hover { transform: scale(1.03); }
+.progress-bar{
+  width: 100%;
+  height: 22px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 12px;
+  margin: 8px 0 14px 0;
+  position: relative;
+}
 
-    .result-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .result-message {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      text-align: center;
-      font-size: 1.5em;
-      color: #667eea;
-    }
-    .firework {
-      position: absolute;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      animation: explode 5s ease-in-out;
-    }
-    @keyframes explode {
-      0% { transform: scale(0); opacity: 1; }
-      50% { transform: scale(20); opacity: 0.5; }
-      100% { transform: scale(40); opacity: 0; }
-    }
+.progress-bar-fill{
+  height: 100%;
+  width: 0%;
+  border-radius: 12px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 99, 132, 0.85),
+    rgba(255, 159, 64, 0.85),
+    rgba(255, 205, 86, 0.85),
+    rgba(75, 192, 192, 0.85),
+    rgba(54, 162, 235, 0.85),
+    rgba(153, 102, 255, 0.85)
+  );
+  background-size: 300% 100%;
+  animation: rainbowFlow 6s ease-in-out infinite;
+  transition: width 0.4s;
+}
 
-    /* Цифровая панель снизу */
-    .keypad{
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: var(--keypad-h);
-      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(10px);
-      z-index: 999;
-      border-top-left-radius: 18px;
-      border-top-right-radius: 18px;
-      box-shadow: 0 -6px 20px rgba(0,0,0,0.15);
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-    .keypad button{
-      border: none;
-      border-radius: 14px;
-      font-size: 22px;
-      padding: 14px 0;
-      background: #667eea;
-      color: #fff;
-      cursor: pointer;
-    }
-    .keypad button.secondary{ background: #764ba2; }
+@keyframes rainbowFlow{
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.progress-icon{
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%) translateX(26px);
+  background: rgba(180, 225, 255, 0.95);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 6px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+.progress-icon img{
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+#examples{
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  height: calc(
+    100dvh
+    - 56px
+    - 30px
+    - 62px
+    - 48px
+    - (var(--gap) * 2)
+    - var(--actions-h)
+    - var(--actions-gap)
+    - var(--keypad-h)
+    - var(--safe)
+  );
+  padding-bottom: var(--gap);
+  background: transparent;
+  box-shadow: none;
+  filter: none;
+  backdrop-filter: none;
+}
+
+.example{
+  margin: var(--gap) 0;
+  padding: 10px 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+  font-size: 1.25em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  min-height: 56px;
+}
+
+.example .expr{
+  font-size: 1.02em;
+  max-width: 84%;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+}
+
+.example input{
+  width: 60px;
+  height: 42px;
+  font-size: 1.2em;
+  border: 2px solid #667eea;
+  border-radius: 14px;
+  text-align: center;
+  background: #fff;
+}
+
+.example.correct{ outline: 3px solid rgba(0,200,0,0.35); }
+.example.incorrect{ outline: 3px solid rgba(255,0,0,0.3); }
+
+.button-row{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--keypad-h) + var(--actions-gap) + var(--safe));
+  height: var(--actions-h);
+  padding: 10px var(--pad);
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  z-index: 998;
+  background: rgba(255,255,255,0.22);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  margin: 0 var(--pad);
+  box-shadow: 0 -8px 20px rgba(0,0,0,0.12);
+}
+
+.action-button{
+  flex: 1;
+  max-width: 260px;
+  padding: 14px;
+  border-radius: 18px;
+  border: none;
+  background: #667eea;
+  color: #fff;
+  font-size: 1.05em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.18);
+}
+
+.keypad{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: auto;
+  max-height: calc(var(--keypad-h) + var(--safe));
+  padding: 12px var(--pad) calc(12px + var(--safe));
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 -10px 24px rgba(0,0,0,0.18);
+  z-index: 999;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.keypad button{
+  height: 56px;
+  padding: 0;
+  font-size: 22px;
+  border-radius: 16px;
+  border: none;
+  background: #667eea;
+  color: #fff;
+  cursor: pointer;
+}
+
+.keypad button.secondary{ background: #764ba2; }
+
+.result-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.result-message{
+  background: #fff;
+  padding: 22px;
+  border-radius: 16px;
+  font-size: 1.5em;
+  color: #667eea;
+  text-align: center;
+}
+
+.firework{
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  animation: explode 5s ease-in-out;
+}
+
+@keyframes explode{
+  0% { transform: scale(0); opacity: 1; }
+  50% { transform: scale(20); opacity: 0.5; }
+  100% { transform: scale(40); opacity: 0; }
+}
   </style>
 </head>
 
@@ -344,7 +398,6 @@
     <div id="fireworks"></div>
   </div>
 
-  <!-- Цифровая панель -->
   <div class="keypad" id="keypad">
     <button onclick="kp('1')">1</button>
     <button onclick="kp('2')">2</button>
@@ -366,10 +419,69 @@
     let examples = [];
     let activeInput = null;
 
+    function randInt(min, max){
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function pickOp(preferMulDiv = true){
+      if (preferMulDiv){
+        return Math.random() < 0.65 ? (Math.random() < 0.5 ? '*' : '/') : (Math.random() < 0.5 ? '+' : '-');
+      }
+      return Math.random() < 0.5 ? '+' : '-';
+    }
+
+    function evalSafeFlat(tokens){
+      const arr = tokens.map(t => ({...t}));
+
+      // 1) * /
+      let i = 0;
+      while (i < arr.length){
+        if (arr[i].type === 'op' && (arr[i].value === '*' || arr[i].value === '/')){
+          const op = arr[i].value;
+          const left = arr[i-1].value;
+          const right = arr[i+1].value;
+
+          let res;
+          if (op === '*'){
+            res = left * right;
+          } else {
+            if (right === 0) return { ok:false };
+            if (left % right !== 0) return { ok:false };
+            res = left / right;
+          }
+
+          arr.splice(i-1, 3, { type:'num', value: res });
+          i = Math.max(0, i-2);
+        } else {
+          i++;
+        }
+      }
+
+      // 2) + -
+      let result = arr[0].value;
+      for (let j = 1; j < arr.length; j += 2){
+        const op = arr[j].value;
+        const num = arr[j+1].value;
+        if (op === '+') result += num;
+        else result -= num;
+
+        if (result < 0) return { ok:false };
+      }
+
+      return { ok:true, value: result };
+    }
+
+    function canUseNumber(n, freqMap){
+      const limit = 1; // не чаще одного раза на блок из 10
+      return (freqMap.get(n) || 0) < limit;
+    }
+    function addNumber(n, freqMap){
+      freqMap.set(n, (freqMap.get(n) || 0) + 1);
+    }
+
     function toggleMenu() {
       document.getElementById('modalOverlay').style.display = 'flex';
     }
-
     function closeMenu() {
       document.getElementById('modalOverlay').style.display = 'none';
     }
@@ -381,7 +493,6 @@
       generateLevelSelector();
       generateExamples();
 
-      // активная кнопка меню
       document.getElementById('multiplyBtn').classList.remove('active');
       document.getElementById('additionBtn').classList.remove('active');
       document.getElementById('multiBtn').classList.remove('active');
@@ -393,13 +504,13 @@
       currentLevel = level;
       generateExamples();
       document.querySelectorAll('.level-selector button').forEach(btn => btn.classList.remove('active'));
-      const b = document.querySelector(`.level-selector button[data-level="${level}"]`);
+      const b = document.querySelector('.level-selector button[data-level="'+level+'"]');
       if (b) b.classList.add('active');
     }
 
     function updateHeader() {
       const header = document.getElementById('header');
-      if (currentTab === 'multi') header.textContent = `Многошаговые`;
+      if (currentTab === 'multi') header.textContent = 'Многошаговые';
       else header.textContent = currentTab === 'multiply' ? 'Умножение/Деление' : 'Сложение/Вычитание';
     }
 
@@ -411,45 +522,13 @@
           <button onclick="setLevel(2)" data-level="2">Средний</button>
           <button onclick="setLevel(3)" data-level="3">Сложный</button>
         `;
-        // выделим текущий
         setTimeout(() => {
-          const b = document.querySelector(`.level-selector button[data-level="${currentLevel}"]`);
+          const b = document.querySelector('.level-selector button[data-level="'+currentLevel+'"]');
           if (b) b.classList.add('active');
         }, 0);
       } else {
         selector.innerHTML = '';
       }
-    }
-
-    function isValidMultiExample(expression) {
-      const steps = expression.replace(/\s+/g, ' ').trim().split(' ');
-      let result = 0;
-      let op = '+';
-      let inBrackets = false;
-
-      for (let i = 0; i < steps.length; i++) {
-        const token = steps[i];
-        if (token === '(') inBrackets = true;
-        else if (token === ')') inBrackets = false;
-        else if (token === '+' || token === '-' || token === '*' || token === '/') {
-          if (inBrackets && (token === '*' || token === '/')) return false;
-          op = token;
-        } else {
-          const num = parseInt(token);
-          if (Number.isNaN(num)) continue;
-
-          if (op === '+') result = result + num;
-          else if (op === '-') result = result - num;
-          else if (op === '*') result = result * num;
-          else if (op === '/') {
-            if (num === 0) return false;
-            if (result % num !== 0 || result / num > 10) return false;
-            result = result / num;
-          }
-          if (result < 0) return false;
-        }
-      }
-      return true;
     }
 
     function generateExamples() {
@@ -459,79 +538,188 @@
       activeInput = null;
 
       const count = currentTab === 'multi' ? 4 : 10;
-      const used = new Set();
+      const usedExpr = new Set();
+      const numberFreqMap = new Map();
 
       for (let i = 0; i < count; i++) {
         let expression = null, correct = null;
         let attempts = 0;
 
-        while (attempts < 120) {
+        while (attempts < 200) {
           attempts++;
+          expression = null;
+          correct = null;
 
           if (currentTab === 'multiply') {
-            // строго таблица до 10: деление только если делится нацело
-            const op = Math.random() < 0.5 ? '*' : '/';
-            let a = Math.floor(Math.random() * 10) + 1;
-            let b = Math.floor(Math.random() * 10) + 1;
+            let op = Math.random() < 0.5 ? '*' : '/';
+            let a, b;
 
-            if (op === '/') {
-              // сделаем так, чтобы делилось: a = b*k
-              const k = Math.floor(Math.random() * 10) + 1;
-              a = b * k;
-              correct = k;
-            } else {
-              correct = a * b;
+            for (let t = 0; t < 120; t++){
+              a = randInt(1, 10);
+              b = randInt(1, 10);
+              if (!canUseNumber(a, numberFreqMap)) continue;
+              if (!canUseNumber(b, numberFreqMap)) continue;
+
+              if (op === '/') {
+                const k = randInt(1, 10);
+                a = b * k;
+                if (!canUseNumber(a, numberFreqMap)) continue;
+                correct = k;
+              } else {
+                correct = a * b;
+              }
+
+              addNumber(a, numberFreqMap);
+              addNumber(b, numberFreqMap);
+              expression = `${a} ${op} ${b}`;
+              break;
             }
-            expression = `${a} ${op} ${b}`;
           }
 
           else if (currentTab === 'addition') {
-            const op = Math.random() < 0.5 ? '+' : '-';
-            let a = Math.floor(Math.random() * 20);
-            let b = Math.floor(Math.random() * 20);
-            if (op === '-' && a < b) continue;
-            correct = op === '+' ? a + b : a - b;
-            expression = `${a} ${op} ${b}`;
+            let op = Math.random() < 0.5 ? '+' : '-';
+            let a, b;
+
+            for (let t = 0; t < 120; t++){
+              a = randInt(0, 20);
+              b = randInt(0, 20);
+              if (!canUseNumber(a, numberFreqMap)) continue;
+              if (!canUseNumber(b, numberFreqMap)) continue;
+
+              if (op === '-' && a < b) continue;
+              correct = op === '+' ? a + b : a - b;
+
+              addNumber(a, numberFreqMap);
+              addNumber(b, numberFreqMap);
+              expression = `${a} ${op} ${b}`;
+              break;
+            }
           }
 
           else if (currentTab === 'multi') {
-            // многошаговые: только + и -, скобки, без умнож/дел внутри скобок
-            let a = Math.floor(Math.random() * 10) + 1;
-            let b = Math.floor(Math.random() * 10) + 1;
-            let c = Math.floor(Math.random() * 10) + 1;
-            let d = Math.floor(Math.random() * 10) + 1;
-            let e = Math.floor(Math.random() * 10) + 1;
+            const use2Brackets = currentLevel >= 3;
 
-            const op1 = Math.random() < 0.5 ? '+' : '-';
-            const op2 = Math.random() < 0.5 ? '+' : '-';
-            const op3 = Math.random() < 0.5 ? '+' : '-';
-            const op4 = Math.random() < 0.5 ? '+' : '-';
+            function makeBracket(){
+              const opIn = Math.random() < 0.5 ? '+' : '-';
+              let x, y, val;
 
-            if (currentLevel === 1) {
-              expression = `${a} ${op1} ${b} ${op2} (${c} ${op3} ${d}) ${op4} ${e}`;
-            } else if (currentLevel === 2) {
-              expression = `(${a} ${op1} ${b}) ${op2} ${c} ${op3} ${d} ${op4} ${e}`;
-            } else {
-              let f = Math.floor(Math.random() * 10) + 1;
-              let g = Math.floor(Math.random() * 10) + 1;
-              const op5 = Math.random() < 0.5 ? '+' : '-';
-              const op6 = Math.random() < 0.5 ? '+' : '-';
-              expression = `(${a} ${op1} ${b}) ${op2} (${c} ${op3} ${d}) ${op4} ${e} ${op5} ${f} ${op6} ${g}`;
+              for (let t = 0; t < 140; t++){
+                x = randInt(1, 10);
+                y = randInt(1, 10);
+
+                if (!canUseNumber(x, numberFreqMap)) continue;
+                if (!canUseNumber(y, numberFreqMap)) continue;
+
+                if (opIn === '-'){
+                  if (x <= y) continue;
+                  val = x - y;
+                } else {
+                  val = x + y;
+                }
+                if (val <= 0) continue;
+
+                addNumber(x, numberFreqMap);
+                addNumber(y, numberFreqMap);
+                return { text: `(${x} ${opIn} ${y})`, value: val };
+              }
+              return { text: `(9 - 3)`, value: 6 };
             }
 
-            try {
-              correct = eval(expression.replace(/\s+/g, ''));
-            } catch (err) {
-              continue;
+            function makeNumber(){
+              for (let t = 0; t < 140; t++){
+                const n = randInt(1, 10);
+                if (!canUseNumber(n, numberFreqMap)) continue;
+                addNumber(n, numberFreqMap);
+                return n;
+              }
+              return randInt(1, 10);
             }
-            if (correct < 0) continue;
-            if (!isValidMultiExample(expression)) continue;
+
+            function buildExpression(){
+              const b1 = makeBracket();
+              const b2 = use2Brackets ? makeBracket() : null;
+
+              let terms = [];
+              if (currentLevel === 1){
+                const n1 = makeNumber();
+                const n2 = makeNumber();
+                terms = [ {text: `${n1}`, value: n1}, b1, {text: `${n2}`, value: n2} ];
+              } else if (currentLevel === 2){
+                const n1 = makeNumber();
+                const n2 = makeNumber();
+                terms = [ b1, {text: `${n1}`, value: n1}, {text: `${n2}`, value: n2} ];
+              } else {
+                const n1 = makeNumber();
+                const n2 = makeNumber();
+                terms = [ b1, b2, {text: `${n1}`, value: n1}, {text: `${n2}`, value: n2} ];
+              }
+
+              // операции вне скобок: чередуем, чаще * и /
+              let ops = [];
+              let lastOp = null;
+              for (let i = 0; i < terms.length - 1; i++){
+                let op;
+                for (let t = 0; t < 60; t++){
+                  op = pickOp(true);
+                  if (op === lastOp) continue;
+                  lastOp = op;
+                  break;
+                }
+                ops.push(op);
+              }
+
+              // деления: делится нацело
+              for (let i = 0; i < ops.length; i++){
+                if (ops[i] === '/'){
+                  const left = terms[i].value;
+                  let right = terms[i+1].value;
+
+                  let found = false;
+                  for (let d = 1; d <= 10; d++){
+                    if (left % d === 0){
+                      right = d;
+                      found = true;
+                      break;
+                    }
+                  }
+                  if (!found) right = 1;
+                  terms[i+1] = { text: `${right}`, value: right };
+                }
+              }
+
+              // проверка промежуточных шагов
+              const tokens = [];
+              for (let i = 0; i < terms.length; i++){
+                tokens.push({ type:'num', value: terms[i].value });
+                if (i < ops.length) tokens.push({ type:'op', value: ops[i] });
+              }
+              const r = evalSafeFlat(tokens);
+              if (!r.ok) return null;
+
+              const parts = [];
+              for (let i = 0; i < terms.length; i++){
+                parts.push(terms[i].text);
+                if (i < ops.length) parts.push(ops[i]);
+              }
+              return { expression: parts.join(' '), correct: r.value };
+            }
+
+            let built = null;
+            for (let t = 0; t < 160; t++){
+              built = buildExpression();
+              if (built) break;
+            }
+            if (!built) continue;
+
+            expression = built.expression;
+            correct = built.correct;
           }
 
-          if (expression && !used.has(expression)) {
-            used.add(expression);
-            break;
-          }
+          if (!expression) continue;
+          if (usedExpr.has(expression)) continue;
+
+          usedExpr.add(expression);
+          break;
         }
 
         if (!expression) {
@@ -563,7 +751,6 @@
 
       updateProgress();
 
-      // активируем первое поле
       setTimeout(() => {
         const first = document.querySelector('.example input');
         if (first) setActive(first);
@@ -580,9 +767,12 @@
       if(!activeInput){
         const firstEmpty = [...document.querySelectorAll('.example input')].find(i => i.value === '');
         if(firstEmpty) setActive(firstEmpty);
-        else setActive(document.querySelector('.example input'));
+        else {
+          const first = document.querySelector('.example input');
+          if (first) setActive(first);
+        }
       }
-      // ограничим длину ответа (чтобы не набивали случайно 99999)
+      if (!activeInput) return;
       if (activeInput.value.length >= 3) return;
       activeInput.value += ch;
       updateProgress();
@@ -654,7 +844,7 @@
 
       document.getElementById('progressFill').style.width = percent + '%';
       document.getElementById('rocket').style.right = (100 - percent) + '%';
-      document.getElementById('rocket').style.transform = 'translateY(-50%) translateX(25px)';
+      document.getElementById('rocket').style.transform = 'translateY(-50%) translateX(26px)';
       document.getElementById('rocket').style.left = 'auto';
     }
 
@@ -662,7 +852,7 @@
     setTab('multiply');
     document.getElementById('progressFill').style.width = '0%';
     document.getElementById('rocket').style.right = '100%';
-    document.getElementById('rocket').style.transform = 'translateY(-50%) translateX(25px)';
+    document.getElementById('rocket').style.transform = 'translateY(-50%) translateX(26px)';
     document.getElementById('rocket').style.left = 'auto';
   </script>
 </body>
